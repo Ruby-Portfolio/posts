@@ -25,13 +25,13 @@ export class Post {
 
   @IsString()
   @IsNotEmpty()
-  @MaxLength(6)
-  @Column()
+  @MaxLength(20)
+  @Column({ length: 20 })
   title: string;
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(200)
-  @Column()
+  @Column({ length: 200 })
   content: string;
 }
