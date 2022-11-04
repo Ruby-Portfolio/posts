@@ -18,6 +18,13 @@ import {
 export class PostService {
   constructor(private readonly postRepository: PostRepository) {}
 
+  /**
+   * 게시글 등록
+   * @param author 게시글 작성자
+   * @param password 게시글 비밀번호
+   * @param title 게시글 제목
+   * @param content 게시글 내용
+   */
   async addPost({
     author,
     password,
@@ -34,10 +41,18 @@ export class PostService {
     });
   }
 
+  /**
+   * 게시글 조회
+   * @param getPosts 게시글 검색 조건
+   */
   async getPosts(getPosts: GetPostsDto): Promise<Post[]> {
     return this.postRepository.getPosts(getPosts);
   }
 
+  /**
+   * 게시글 상세 조회
+   * @param id 상세 조회할 게시글 Id
+   */
   async getPost(id: number): Promise<Post> {
     const post = await this.postRepository.findOneBy({ id });
 
@@ -48,6 +63,14 @@ export class PostService {
     return post;
   }
 
+  /**
+   * 게시글 수정
+   * @param id 수정할 게시글 Id
+   * @param author 게시글 작성자
+   * @param password 게시글 비밀번호
+   * @param title 게시글 제목
+   * @param content 게시글 내용
+   */
   async updatePost(
     id: number,
     { author, password, title, content }: UpdatePostDto,
@@ -69,6 +92,11 @@ export class PostService {
     });
   }
 
+  /**
+   * 게시글 삭제
+   * @param id 삭제할 게시글 Id
+   * @param password 게시글 비밀번호
+   */
   async deletePost(
     id: number,
     { password }: DeletePostDto,

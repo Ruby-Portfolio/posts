@@ -9,6 +9,11 @@ import { GetPostsDto } from './post.request.dto';
 
 @CustomRepository(Post)
 export class PostRepository extends Repository<Post> {
+  /**
+   * 게시글 검색
+   * @param beforeLastId 이전에 조회한 게시글 목록의 마지막 Id
+   * @param keyword 검색어
+   */
   async getPosts({ beforeLastId, keyword = '' }: GetPostsDto) {
     const take = 20;
     const postAlias = Post.alias;
