@@ -12,7 +12,10 @@ import { PostErrorMessage } from '../../../domain/post/post.error.message';
 import * as bcrypt from 'bcrypt';
 import { CommonErrorMessage } from '../../../common/error/common.error.message';
 import { containsCondition } from '../../../common/queryBrackets/queryBrackets';
-import { PostNotFoundException } from '../../../domain/post/post.exception';
+import {
+  PasswordMismatchException,
+  PostNotFoundException,
+} from '../../../domain/post/post.exception';
 import { InvalidIdException } from '../../../common/error/common.exception';
 
 describe('PostController', () => {
@@ -49,24 +52,8 @@ describe('PostController', () => {
     postRepository = module.get<PostRepository>(PostRepository);
   });
 
-  describe('/POST posts', () => {
+  describe('/POST /api/posts', () => {
     describe('게시글 등록 실패', () => {
-      test('작성자 명이 빈 문자열일 경우 400 응답', async () => {
-        const res = await request(app.getHttpServer())
-          .post('/api/posts')
-          .send({
-            author: '',
-            password: '1234qwer',
-            title: '게시글 등록 테스트',
-            content: '게시글 등록 테스트 본문',
-          })
-          .expect(400);
-
-        return expect(res.body.message[0]).toEqual(
-          PostErrorMessage.AUTHOR_NOT_EMPTY,
-        );
-      });
-
       test('작성자 명이 빈 문자열일 경우 400 응답', async () => {
         const res = await request(app.getHttpServer())
           .post('/api/posts')
@@ -145,7 +132,7 @@ describe('PostController', () => {
       });
 
       test('게시글 본문이 2글자 미만일 경우 400 응답', async () => {
-        return request(app.getHttpServer())
+        const res = await request(app.getHttpServer())
           .post('/api/posts')
           .send({
             author: '루비',
@@ -154,6 +141,9 @@ describe('PostController', () => {
             content: '게',
           })
           .expect(400);
+        return expect(res.body.message[0]).toEqual(
+          PostErrorMessage.CONTENT_MIN_LENGTH,
+        );
       });
 
       test('게시글 본문이 200 글자 초과일 경우 400 응답', async () => {
@@ -167,14 +157,13 @@ describe('PostController', () => {
           .send({
             author: '루비',
             password: 'qwerqwe12',
-            title:
-              '게시글 제목 게시글 제목 게시글 제목 게시글 제목 게시글 제목 ',
+            title: '게시글 제목',
             content,
           })
           .expect(400);
 
         return expect(res.body.message[0]).toEqual(
-          PostErrorMessage.TITLE_MAX_LENGTH,
+          PostErrorMessage.CONTENT_MAX_LENGTH,
         );
       });
 
@@ -216,7 +205,7 @@ describe('PostController', () => {
     });
   });
 
-  describe('/GET posts', () => {
+  describe('/GET /api/posts', () => {
     beforeAll(async () => {
       await postRepository.delete({});
 
@@ -322,7 +311,7 @@ describe('PostController', () => {
     });
   });
 
-  describe('/GET posts', () => {
+  describe('/GET /api/posts/:id', () => {
     let savedPost;
 
     beforeAll(async () => {
@@ -367,6 +356,161 @@ describe('PostController', () => {
         .expect(200);
 
       return expect(res.body.content.id).toEqual(id);
+    });
+  });
+
+  describe('/PUT /api/posts/:id', () => {
+    let savedPost;
+    const password = '1234qwer';
+
+    beforeAll(async () => {
+      await postRepository.delete({});
+
+      const post = new Post();
+      post.author = `작성자`;
+      post.password = await bcrypt.hash(password, 12);
+      post.title = `게시글`;
+      post.content = `게시글 본문입니다.`;
+      savedPost = await postRepository.save(post);
+    });
+
+    describe('게시글 수정 실패', () => {
+      test('작성자 명이 빈 문자열일 경우 400 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .put(`/api/posts/${savedPost.id}`)
+          .send({
+            author: '',
+            password,
+            title: '게시글 수정 테스트',
+            content: '게시글 수정 테스트 본문',
+          })
+          .expect(400);
+
+        return expect(res.body.message[0]).toEqual(
+          PostErrorMessage.AUTHOR_NOT_EMPTY,
+        );
+      });
+
+      test('비밀번호가 일치하지 않을 경우 400 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .put(`/api/posts/${savedPost.id}`)
+          .send({
+            author: '루비',
+            password: 'qwer1asd',
+            title: '게시글 수정 테스트',
+            content: '게시글 수정 테스트 본문',
+          })
+          .expect(403);
+
+        return expect(res.body.message).toEqual(
+          new PasswordMismatchException().message,
+        );
+      });
+
+      test('게시글 제목이 2글자 미만일 경우 400 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .put(`/api/posts/${savedPost.id}`)
+          .send({
+            author: '루비',
+            password,
+            title: '게',
+            content: '게시글 수정 테스트 본문',
+          })
+          .expect(400);
+
+        return expect(res.body.message[0]).toEqual(
+          PostErrorMessage.TITLE_MIN_LENGTH,
+        );
+      });
+
+      test('게시글 제목이 20글자 초과일 경우 400 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .put(`/api/posts/${savedPost.id}`)
+          .send({
+            author: '루비',
+            password,
+            title:
+              '게시글 제목 게시글 제목 게시글 제목 게시글 제목 게시글 제목 ',
+            content: '게시글 수정 테스트 본문',
+          })
+          .expect(400);
+
+        return expect(res.body.message[0]).toEqual(
+          PostErrorMessage.TITLE_MAX_LENGTH,
+        );
+      });
+
+      test('게시글 본문이 2글자 미만일 경우 400 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .put(`/api/posts/${savedPost.id}`)
+          .send({
+            author: '루비',
+            password,
+            title: '게시글 등록 테스트',
+            content: '게',
+          })
+          .expect(400);
+
+        return expect(res.body.message[0]).toEqual(
+          PostErrorMessage.CONTENT_MIN_LENGTH,
+        );
+      });
+
+      test('게시글 본문이 200 글자 초과일 경우 400 응답', async () => {
+        let content = '';
+        for (let i = 0; i < 30; i++) {
+          content += '게시글 등록 테스트 본문';
+        }
+
+        const res = await request(app.getHttpServer())
+          .put(`/api/posts/${savedPost.id}`)
+          .send({
+            author: '루비',
+            password,
+            title: '게시글 제목',
+            content,
+          })
+          .expect(400);
+
+        return expect(res.body.message[0]).toEqual(
+          PostErrorMessage.CONTENT_MAX_LENGTH,
+        );
+      });
+
+      test('비밀번호를 제외한 모든 필드가 빈 문자열일 경우 400 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .put(`/api/posts/${savedPost.id}`)
+          .send({
+            author: '',
+            password,
+            title: '',
+            content: '',
+          })
+          .expect(400);
+
+        await expect(res.body.message.length).toEqual(3);
+        await expect(res.body.message).toContain(
+          PostErrorMessage.AUTHOR_NOT_EMPTY,
+        );
+        await expect(res.body.message).toContain(
+          PostErrorMessage.TITLE_MIN_LENGTH,
+        );
+        await expect(res.body.message).toContain(
+          PostErrorMessage.CONTENT_MIN_LENGTH,
+        );
+      });
+    });
+
+    test('게시글 수정 성공', async () => {
+      return request(app.getHttpServer())
+        .put(`/api/posts/${savedPost.id}`)
+        .send({
+          author: '루비',
+          password,
+          title: '게시글 수정 테스트',
+          content: '게시글 수정 테스트 본문',
+        })
+        .expect(204);
     });
   });
 });
