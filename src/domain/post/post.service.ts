@@ -7,7 +7,7 @@ import {
   UpdatePostDto,
 } from './post.request.dto';
 import * as bcrypt from 'bcrypt';
-import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
+import { InsertResult, UpdateResult } from 'typeorm';
 import { Post } from './post.entity';
 import {
   PasswordMismatchException,
@@ -72,7 +72,7 @@ export class PostService {
   async deletePost(
     id: number,
     { password }: DeletePostDto,
-  ): Promise<DeleteResult> {
+  ): Promise<UpdateResult> {
     const existsPost = await this.postRepository.findOneBy({ id });
 
     if (!existsPost) {
