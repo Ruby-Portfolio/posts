@@ -1,10 +1,19 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
-import { IsPassword } from '../../validation/IsPassword.validation';
+import { IsPassword } from '../../common/validation/IsPassword.validation';
 import { PostMessage } from './post.message';
 
 @Entity()
 export class Post {
+  static alias = {
+    entity: 'post',
+    id: 'post.id',
+    author: 'post.author',
+    password: 'post.password',
+    title: 'post.title',
+    content: 'post.content',
+  };
+
   @PrimaryGeneratedColumn()
   id: number;
 
