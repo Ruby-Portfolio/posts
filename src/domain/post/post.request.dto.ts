@@ -1,6 +1,6 @@
 import { PickType } from '@nestjs/swagger';
 import { Post } from './post.entity';
-import { IsId } from '../../common/validation/IsId.validation';
+import { IsOptionalId } from '../../common/validation/IsOptionalId.validation';
 import { IsOptional } from 'class-validator';
 
 export class AddPostDto extends PickType(Post, [
@@ -11,8 +11,8 @@ export class AddPostDto extends PickType(Post, [
 ] as const) {}
 
 export class GetPostsDto {
-  @IsId()
-  beforeLastId: number | null;
+  @IsOptionalId()
+  beforeLastId: number;
 
   @IsOptional()
   keyword: string;
