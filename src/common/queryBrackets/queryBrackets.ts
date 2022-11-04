@@ -30,7 +30,7 @@ export const containsCondition = (columns: string[], keyword: string) => {
   const whereFactory = (qb: WhereExpressionBuilder) => {
     columns.forEach((column) => {
       words.forEach((word) => {
-        qb.orWhere(`${column} = :word`, { word: `%${word}%` });
+        qb.orWhere(`${column} LIKE :word`, { word: `%${word}%` });
       });
     });
   };
