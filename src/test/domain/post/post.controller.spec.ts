@@ -375,6 +375,22 @@ describe('PostController', () => {
     });
 
     describe('게시글 수정 실패', () => {
+      test('존재하지 않는 게시글을 수정 요청시 404 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .put(`/api/posts/${savedPost.id + 999}`)
+          .send({
+            author: '루비',
+            password,
+            title: '게시글 수정 테스트',
+            content: '게시글 수정 테스트 본문',
+          })
+          .expect(404);
+
+        return expect(res.body.message).toEqual(
+          new PostNotFoundException().message,
+        );
+      });
+
       test('작성자 명이 빈 문자열일 경우 400 응답', async () => {
         const res = await request(app.getHttpServer())
           .put(`/api/posts/${savedPost.id}`)
