@@ -3,13 +3,15 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Param,
   Post,
   Query,
   Res,
 } from '@nestjs/common';
 import { AddPostDto, GetPostsDto } from './post.request.dto';
 import { PostService } from './post.service';
-import { PostsResponse } from './post.response.dto';
+import { PostResponse, PostsResponse } from './post.response.dto';
+import { IdPipe } from '../../common/pipe/validation.pipe';
 
 @Controller('posts')
 export class PostController {
@@ -25,5 +27,11 @@ export class PostController {
   async getPosts(@Query() getPosts: GetPostsDto): Promise<PostsResponse> {
     const posts = await this.postService.getPosts(getPosts);
     return new PostsResponse(posts);
+  }
+
+  @Get(':id')
+  async getPost(@Param('id', IdPipe) id: number): Promise<PostResponse> {
+    const post = await this.postService.getPost(id);
+    return new PostResponse(post);
   }
 }

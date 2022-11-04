@@ -1,7 +1,7 @@
 import { CommonErrorMessage } from '../error/common.error.message';
 import { registerDecorator } from 'class-validator';
 
-export function IsId() {
+export function IsOptionalId() {
   return function (object: Object, propertyName: string) {
     registerDecorator({
       name: 'isId',

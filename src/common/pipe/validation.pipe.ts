@@ -1,4 +1,10 @@
-import { ValidationPipe } from '@nestjs/common';
+import {
+  ArgumentMetadata,
+  Injectable,
+  PipeTransform,
+  ValidationPipe,
+} from '@nestjs/common';
+import { InvalidIdException } from '../error/common.exception';
 
 export const validationPipe = (app) => {
   app.useGlobalPipes(
@@ -12,3 +18,13 @@ export const validationPipe = (app) => {
     }),
   );
 };
+
+@Injectable()
+export class IdPipe implements PipeTransform {
+  transform(value: any, metadata: ArgumentMetadata): any {
+    if (typeof value !== 'number' || isNaN(value)) {
+      throw new InvalidIdException();
+    }
+    return value > 0;
+  }
+}

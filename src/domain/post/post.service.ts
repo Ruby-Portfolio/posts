@@ -4,6 +4,7 @@ import { AddPostDto, GetPostsDto } from './post.request.dto';
 import * as bcrypt from 'bcrypt';
 import { InsertResult } from 'typeorm';
 import { Post } from './post.entity';
+import { PostNotFoundException } from './post.exception';
 
 @Injectable()
 export class PostService {
@@ -27,5 +28,15 @@ export class PostService {
 
   async getPosts(getPostsDto: GetPostsDto): Promise<Post[]> {
     return this.postRepository.getPosts(getPostsDto);
+  }
+
+  async getPost(id: number): Promise<Post> {
+    const post = await this.postRepository.findOneBy({ id });
+
+    if (!post) {
+      throw new PostNotFoundException();
+    }
+
+    return post;
   }
 }
