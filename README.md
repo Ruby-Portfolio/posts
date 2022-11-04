@@ -52,7 +52,7 @@
 
 | Method | URL | Request Parameter | Response |
 | --- | --- | --- | --- |
-| GET | /api/posts | beforeLastId<br>- 이전에 조회한 목록의 마지막 게시글 id | statusCode : 200<br>data : {<br>id : 게시글 id (순번)<br>title :게시글 제목<br>author : 작성자<br>createAt : 게시글 등록일<br>beforeLastId : 조회 목록의 마지막 id 값<br>} [] |
+| GET | /api/posts | beforeLastId: 이전에 조회한 목록의 마지막 게시글 id<br>keyword: 검색어 | statusCode : 200<br>data : {<br>id : 게시글 id (순번)<br>title :게시글 제목<br>author : 작성자<br>createAt : 게시글 등록일<br>beforeLastId : 조회 목록의 마지막 id 값<br>} [] |
 
 - 게시글 상세 조회
 
