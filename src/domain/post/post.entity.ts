@@ -3,6 +3,7 @@ import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { IsPassword } from '../../common/validation/IsPassword.validation';
 import { PostErrorMessage } from './post.error.message';
 import { DateColumns } from '../embedded/dateColumns';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class Post {
@@ -38,4 +39,8 @@ export class Post {
 
   @Column(() => DateColumns, { prefix: false })
   dateColumns: DateColumns;
+
+  equalsPassword(inputPassword: string) {
+    return bcrypt.compare(inputPassword, this.password);
+  }
 }

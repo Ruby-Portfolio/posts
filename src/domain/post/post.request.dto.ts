@@ -17,3 +17,10 @@ export class GetPostsDto {
   @IsOptional()
   keyword: string;
 }
+
+export class UpdatePostDto extends PickType(Post, [
+  'author',
+  'password',
+  'title',
+  'content',
+] as const) {}
