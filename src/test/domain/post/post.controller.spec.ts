@@ -272,7 +272,14 @@ describe('PostController', () => {
             );
           }),
         ).toBeTruthy();
-        return expect(res.body.contents.length > 0).toBeTruthy();
+        await expect(res.body.contents.length > 0).toBeTruthy();
+
+        const minId = Math.min.apply(
+          null,
+          res.body.contents.map((post) => post.id),
+        );
+
+        await expect(res.body.beforeLastId).toEqual(minId);
       });
 
       test('이전 조회 목록의 마지막 게시글 이후의 목록 중에서 검색어에 해당하는 게시글 목록 조회', async () => {
@@ -298,7 +305,14 @@ describe('PostController', () => {
             );
           }),
         ).toBeTruthy();
-        return expect(res.body.contents.length > 0).toBeTruthy();
+        await expect(res.body.contents.length > 0).toBeTruthy();
+
+        const minId = Math.min.apply(
+          null,
+          res.body.contents.map((post) => post.id),
+        );
+
+        await expect(res.body.beforeLastId).toEqual(minId);
       });
 
       test('검색조건 없이 게시글 목록 조회', async () => {
@@ -306,7 +320,14 @@ describe('PostController', () => {
           .get('/api/posts')
           .expect(200);
 
-        return expect(res.body.contents.length).toEqual(20);
+        await expect(res.body.contents.length).toEqual(20);
+
+        const minId = Math.min.apply(
+          null,
+          res.body.contents.map((post) => post.id),
+        );
+
+        await expect(res.body.beforeLastId).toEqual(minId);
       });
     });
   });
