@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AddPostDto, GetPostsDto } from './post.request.dto';
 import { PostService } from './post.service';
-import { PostsResponse } from './post.response.dto';
+import { PostResponse, PostsResponse } from './post.response.dto';
 
 @Controller('posts')
 export class PostController {
@@ -25,5 +25,11 @@ export class PostController {
   async getPosts(@Query() getPosts: GetPostsDto): Promise<PostsResponse> {
     const posts = await this.postService.getPosts(getPosts);
     return new PostsResponse(posts);
+  }
+
+  @Get(':id')
+  async getPost(@Query() id: number): Promise<PostResponse> {
+    const post = await this.postService.getPost(id);
+    return new PostResponse(post);
   }
 }

@@ -10,3 +10,11 @@ export class PostsResponse {
 
   contents: { id: number; author: string; title: string; content: string }[];
 }
+
+export class PostResponse {
+  constructor(post: Post) {
+    this.content = { ...post };
+  }
+
+  content: { id: number; author: string; title: string; content: string };
+}
