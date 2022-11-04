@@ -1,19 +1,19 @@
-import { registerDecorator, ValidationOptions } from '@nestjs/class-validator';
 import { CommonErrorMessage } from '../error/common.error.message';
+import { registerDecorator } from 'class-validator';
 
-export function IsId(validationOptions?: ValidationOptions) {
+export function IsId() {
   return function (object: Object, propertyName: string) {
     registerDecorator({
       name: 'isId',
       target: object.constructor,
       propertyName: propertyName,
       options: {
-        ...validationOptions,
         message: CommonErrorMessage.ID_INVALID,
       },
       validator: {
         validate(value: any) {
-          return typeof value === 'number' && value > 0;
+          if (!value && typeof value !== 'number') return true;
+          return !isNaN(value) && value > 0;
         },
       },
     });
