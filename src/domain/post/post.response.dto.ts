@@ -5,8 +5,12 @@ export class PostsResponse {
     this.contents = posts?.map((post) => {
       return { ...post, ...post.dateColumns };
     });
+    if (posts.length > 0) {
+      this.beforeLastId = posts[posts.length - 1].id;
+    }
   }
 
+  beforeLastId: number;
   contents: {
     id: number;
     author: string;
