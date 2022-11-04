@@ -22,9 +22,9 @@ export const validationPipe = (app) => {
 @Injectable()
 export class IdPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata): any {
-    if (typeof value !== 'number' || isNaN(value)) {
+    if (typeof value !== 'number' || isNaN(value) || value < 0) {
       throw new InvalidIdException();
     }
-    return value > 0;
+    return value;
   }
 }
