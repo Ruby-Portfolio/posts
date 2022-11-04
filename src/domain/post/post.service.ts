@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PostRepository } from './post.repository';
 import { AddPostDto, GetPostsDto, UpdatePostDto } from './post.request.dto';
 import * as bcrypt from 'bcrypt';
-import { InsertResult } from 'typeorm';
+import { InsertResult, UpdateResult } from 'typeorm';
 import { Post } from './post.entity';
 import {
   PasswordMismatchException,
@@ -46,7 +46,7 @@ export class PostService {
   async updatePost(
     id: number,
     { author, password, title, content }: UpdatePostDto,
-  ) {
+  ): Promise<UpdateResult> {
     const existsPost = await this.postRepository.findOneBy({ id });
 
     if (!existsPost) {

@@ -4,8 +4,8 @@ import {
   Get,
   HttpStatus,
   Param,
-  Patch,
   Post,
+  Put,
   Query,
   Res,
 } from '@nestjs/common';
@@ -36,7 +36,7 @@ export class PostController {
     return new PostResponse(post);
   }
 
-  @Patch(':id')
+  @Put(':id')
   async updatePost(
     @Param('id', IdPipe) id: number,
     @Body() updatePost: UpdatePostDto,
