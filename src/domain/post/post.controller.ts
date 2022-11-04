@@ -7,8 +7,8 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
-  async addPost(@Body() addPost: AddPostDto, @Res() res) {
+  async addPost(@Body() addPost: AddPostDto, @Res() res): Promise<void> {
     await this.postService.addPost(addPost);
-    res.status(HttpStatus.CREATED);
+    return res.status(HttpStatus.CREATED).send();
   }
 }
