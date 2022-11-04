@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Param,
   Post,
   Query,
   Res,
@@ -10,6 +11,7 @@ import {
 import { AddPostDto, GetPostsDto } from './post.request.dto';
 import { PostService } from './post.service';
 import { PostResponse, PostsResponse } from './post.response.dto';
+import { IdPipe } from '../../common/pipe/validation.pipe';
 
 @Controller('posts')
 export class PostController {
@@ -28,7 +30,7 @@ export class PostController {
   }
 
   @Get(':id')
-  async getPost(@Query() id: number): Promise<PostResponse> {
+  async getPost(@Param('id', IdPipe) id: number): Promise<PostResponse> {
     const post = await this.postService.getPost(id);
     return new PostResponse(post);
   }
