@@ -20,6 +20,7 @@ export class PostRepository extends Repository<Post> {
       )
       .take(take)
       .orderBy(postAlias.id, 'DESC')
+
       .getMany();
   }
 }

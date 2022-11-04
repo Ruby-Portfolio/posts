@@ -1,7 +1,14 @@
-import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { AddPostDto, GetPostsDto } from './post.request.dto';
 import { PostService } from './post.service';
-import { CurrentQuery } from '../../common/decorator/param.decorator';
 import { PostsResponse } from './post.response.dto';
 
 @Controller('posts')
@@ -15,9 +22,7 @@ export class PostController {
   }
 
   @Get()
-  async getPosts(
-    @CurrentQuery() getPosts: GetPostsDto,
-  ): Promise<PostsResponse> {
+  async getPosts(@Query() getPosts: GetPostsDto): Promise<PostsResponse> {
     const posts = await this.postService.getPosts(getPosts);
     return new PostsResponse(posts);
   }

@@ -6,6 +6,9 @@ export const validationPipe = (app) => {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
 };
