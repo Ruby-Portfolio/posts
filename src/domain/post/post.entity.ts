@@ -1,14 +1,23 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
-import { IsPassword } from '../../validation/IsPassword.validation';
-import { PostMessage } from './post.message';
+import { IsPassword } from '../../common/validation/IsPassword.validation';
+import { PostErrorMessage } from './post.error.message';
 
 @Entity()
 export class Post {
+  static alias = {
+    entity: 'post',
+    id: 'post.id',
+    author: 'post.author',
+    password: 'post.password',
+    title: 'post.title',
+    content: 'post.content',
+  };
+
   @PrimaryGeneratedColumn()
   id: number;
 
-  @IsNotEmpty({ message: PostMessage.AUTHOR_NOT_EMPTY })
+  @IsNotEmpty({ message: PostErrorMessage.AUTHOR_NOT_EMPTY })
   @Column()
   author: string;
 
@@ -16,13 +25,13 @@ export class Post {
   @Column()
   password: string;
 
-  @MinLength(2, { message: PostMessage.TITLE_MIN_LENGTH })
-  @MaxLength(20, { message: PostMessage.TITLE_MAX_LENGTH })
+  @MinLength(2, { message: PostErrorMessage.TITLE_MIN_LENGTH })
+  @MaxLength(20, { message: PostErrorMessage.TITLE_MAX_LENGTH })
   @Column({ length: 20 })
   title: string;
 
-  @MinLength(2, { message: PostMessage.CONTENT_MIN_LENGTH })
-  @MaxLength(20, { message: PostMessage.CONTENT_MAX_LENGTH })
+  @MinLength(2, { message: PostErrorMessage.CONTENT_MIN_LENGTH })
+  @MaxLength(20, { message: PostErrorMessage.CONTENT_MAX_LENGTH })
   @Column({ length: 200 })
   content: string;
 }

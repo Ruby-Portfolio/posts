@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from '@nestjs/class-validator';
-import { PostMessage } from '../domain/post/post.message';
+import { PostErrorMessage } from '../../domain/post/post.error.message';
 
 export function IsPassword(
   passwordLengthOption?: PasswordLengthOption,
@@ -7,12 +7,12 @@ export function IsPassword(
 ) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
-      name: 'isNumberContains',
+      name: 'isPassword',
       target: object.constructor,
       propertyName: propertyName,
       options: {
         ...validationOptions,
-        message: PostMessage.PASSWORD,
+        message: PostErrorMessage.PASSWORD,
       },
       validator: {
         validate(value: any) {

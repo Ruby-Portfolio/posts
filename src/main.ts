@@ -4,6 +4,7 @@ import { pipeConfig } from './config/pipe.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('/api');
 
   pipeConfig(app);
 
