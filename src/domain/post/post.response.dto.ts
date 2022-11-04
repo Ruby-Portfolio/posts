@@ -11,7 +11,6 @@ export class PostsResponse {
     id: number;
     author: string;
     title: string;
-    content: string;
     createAt: Date;
   }[];
 }
