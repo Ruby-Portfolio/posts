@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { IsPassword } from '../../common/validation/IsPassword.validation';
 import { PostErrorMessage } from './post.error.message';
+import { DateColumns } from '../embedded/dateColumns';
 
 @Entity()
 export class Post {
@@ -34,4 +35,7 @@ export class Post {
   @MaxLength(20, { message: PostErrorMessage.CONTENT_MAX_LENGTH })
   @Column({ length: 200 })
   content: string;
+
+  @Column(() => DateColumns, { prefix: false })
+  dateColumns: DateColumns;
 }

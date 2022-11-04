@@ -3,18 +3,29 @@ import { Post } from './post.entity';
 export class PostsResponse {
   constructor(posts: Post[]) {
     this.contents = posts?.map((post) => {
-      const { id, author, title, content } = post;
-      return { id, author, title, content };
+      return { ...post, ...post.dateColumns };
     });
   }
 
-  contents: { id: number; author: string; title: string; content: string }[];
+  contents: {
+    id: number;
+    author: string;
+    title: string;
+    content: string;
+    createAt: Date;
+  }[];
 }
 
 export class PostResponse {
   constructor(post: Post) {
-    this.content = { ...post };
+    this.content = { ...post, ...post.dateColumns };
   }
 
-  content: { id: number; author: string; title: string; content: string };
+  content: {
+    id: number;
+    author: string;
+    title: string;
+    content: string;
+    createAt: Date;
+  };
 }

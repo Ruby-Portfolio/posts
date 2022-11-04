@@ -290,6 +290,8 @@ describe('PostController', () => {
         .get('/api/posts')
         .expect(200);
 
+      console.log(res.body.contents);
+
       expect(res.body.contents.length).toEqual(20);
     });
   });
