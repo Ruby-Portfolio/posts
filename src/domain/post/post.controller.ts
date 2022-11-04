@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -9,7 +10,12 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { AddPostDto, GetPostsDto, UpdatePostDto } from './post.request.dto';
+import {
+  AddPostDto,
+  DeletePostDto,
+  GetPostsDto,
+  UpdatePostDto,
+} from './post.request.dto';
 import { PostService } from './post.service';
 import { PostResponse, PostsResponse } from './post.response.dto';
 import { IdPipe } from '../../common/pipe/validation.pipe';
@@ -43,6 +49,16 @@ export class PostController {
     @Res() res,
   ): Promise<void> {
     await this.postService.updatePost(id, updatePost);
+    return res.status(HttpStatus.NO_CONTENT).send();
+  }
+
+  @Delete(':id')
+  async deletePost(
+    @Param('id', IdPipe) id: number,
+    @Body() deletePost: DeletePostDto,
+    @Res() res,
+  ): Promise<void> {
+    await this.postService.deletePost(id, deletePost);
     return res.status(HttpStatus.NO_CONTENT).send();
   }
 }

@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PostRepository } from './post.repository';
-import { AddPostDto, GetPostsDto, UpdatePostDto } from './post.request.dto';
+import {
+  AddPostDto,
+  DeletePostDto,
+  GetPostsDto,
+  UpdatePostDto,
+} from './post.request.dto';
 import * as bcrypt from 'bcrypt';
-import { InsertResult, UpdateResult } from 'typeorm';
+import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { Post } from './post.entity';
 import {
   PasswordMismatchException,
@@ -62,5 +67,22 @@ export class PostService {
       title,
       content,
     });
+  }
+
+  async deletePost(
+    id: number,
+    { password }: DeletePostDto,
+  ): Promise<DeleteResult> {
+    const existsPost = await this.postRepository.findOneBy({ id });
+
+    if (!existsPost) {
+      throw new PostNotFoundException();
+    }
+
+    if (!(await existsPost.equalsPassword(password))) {
+      throw new PasswordMismatchException();
+    }
+
+    return this.postRepository.softDelete(id);
   }
 }

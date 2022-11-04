@@ -27,3 +27,8 @@ export class UpdatePostDto extends PickType(Post, [
   @IsString({ message: PostErrorMessage.PASSWORD })
   password: string;
 }
+
+export class DeletePostDto {
+  @IsString({ message: PostErrorMessage.PASSWORD })
+  password: string;
+}
