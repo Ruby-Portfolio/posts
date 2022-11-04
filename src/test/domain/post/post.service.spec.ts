@@ -3,6 +3,7 @@ import { PostRepository } from '../../../domain/post/post.repository';
 import { PostService } from '../../../domain/post/post.service';
 import {
   AddPostDto,
+  DeletePostDto,
   UpdatePostDto,
 } from '../../../domain/post/post.request.dto';
 import { InsertResult, UpdateResult } from 'typeorm';
@@ -136,6 +137,69 @@ describe('PostService', () => {
         .mockResolvedValue(new UpdateResult());
 
       return expect(postService.updatePost(10, updatePost)).resolves.toEqual(
+        new UpdateResult(),
+      );
+    });
+  });
+
+  describe('게시글 삭제', () => {
+    describe('게시글 삭제 실패', () => {
+      test('삭제할 게시글이 존재하지 않을 경우 PostNotFoundException 예외 처리', async () => {
+        const post: Post = {
+          id: 10,
+          title: '테스트',
+          password: 'asd13ad',
+          content: 'asdasd',
+          author: '루비',
+        } as Post;
+
+        jest
+          .spyOn(postRepository, 'findOneBy')
+          .mockResolvedValue(Promise.resolve(null));
+
+        return expect(postService.deletePost(10, post)).rejects.toThrowError(
+          new PostNotFoundException(),
+        );
+      });
+
+      test('비밀번호가 일치하지 않을 경우 PasswordMismatchException 예외 처리', async () => {
+        const post = new Post();
+
+        const deletePost: DeletePostDto = {
+          password: 'asdasd1123',
+        };
+
+        jest
+          .spyOn(postRepository, 'findOneBy')
+          .mockResolvedValue(Promise.resolve(post));
+        jest
+          .spyOn(post, 'equalsPassword')
+          .mockResolvedValue(Promise.resolve(false));
+
+        return expect(
+          postService.deletePost(10, deletePost),
+        ).rejects.toThrowError(new PasswordMismatchException());
+      });
+    });
+
+    test('게시글 삭제 성공', async () => {
+      const post = new Post();
+
+      const deletePost: DeletePostDto = {
+        password: 'asdasd1123',
+      };
+
+      jest
+        .spyOn(postRepository, 'findOneBy')
+        .mockResolvedValue(Promise.resolve(post));
+      jest
+        .spyOn(post, 'equalsPassword')
+        .mockResolvedValue(Promise.resolve(true));
+      jest
+        .spyOn(postRepository, 'softDelete')
+        .mockResolvedValue(new UpdateResult());
+
+      return expect(postService.deletePost(10, deletePost)).resolves.toEqual(
         new UpdateResult(),
       );
     });

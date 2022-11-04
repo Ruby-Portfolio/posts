@@ -375,6 +375,22 @@ describe('PostController', () => {
     });
 
     describe('게시글 수정 실패', () => {
+      test('존재하지 않는 게시글을 수정 요청시 404 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .put(`/api/posts/${savedPost.id + 999}`)
+          .send({
+            author: '루비',
+            password,
+            title: '게시글 수정 테스트',
+            content: '게시글 수정 테스트 본문',
+          })
+          .expect(404);
+
+        return expect(res.body.message).toEqual(
+          new PostNotFoundException().message,
+        );
+      });
+
       test('작성자 명이 빈 문자열일 경우 400 응답', async () => {
         const res = await request(app.getHttpServer())
           .put(`/api/posts/${savedPost.id}`)
@@ -391,7 +407,7 @@ describe('PostController', () => {
         );
       });
 
-      test('비밀번호가 일치하지 않을 경우 400 응답', async () => {
+      test('비밀번호가 일치하지 않을 경우 403 응답', async () => {
         const res = await request(app.getHttpServer())
           .put(`/api/posts/${savedPost.id}`)
           .send({
@@ -510,6 +526,53 @@ describe('PostController', () => {
           title: '게시글 수정 테스트',
           content: '게시글 수정 테스트 본문',
         })
+        .expect(204);
+    });
+  });
+
+  describe('/PUT /api/posts/:id', () => {
+    let savedPost;
+    const password = '1234qwer';
+
+    beforeAll(async () => {
+      await postRepository.delete({});
+
+      const post = new Post();
+      post.author = `작성자`;
+      post.password = await bcrypt.hash(password, 12);
+      post.title = `게시글`;
+      post.content = `게시글 본문입니다.`;
+      savedPost = await postRepository.save(post);
+    });
+
+    describe('게시글 삭제 실패', () => {
+      test('존재하지 않는 게시글을 삭제 요청시 404 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .delete(`/api/posts/${savedPost.id + 999}`)
+          .send({ password })
+          .expect(404);
+
+        return expect(res.body.message).toEqual(
+          new PostNotFoundException().message,
+        );
+      });
+
+      test('비밀번호가 일치하지 않을 경우 403 응답', async () => {
+        const res = await request(app.getHttpServer())
+          .delete(`/api/posts/${savedPost.id}`)
+          .send({ password: 'qwer1asd' })
+          .expect(403);
+
+        return expect(res.body.message).toEqual(
+          new PasswordMismatchException().message,
+        );
+      });
+    });
+
+    test('게시글 삭제 성공', async () => {
+      return request(app.getHttpServer())
+        .delete(`/api/posts/${savedPost.id}`)
+        .send({ password })
         .expect(204);
     });
   });
