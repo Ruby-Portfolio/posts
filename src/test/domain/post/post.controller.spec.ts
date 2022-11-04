@@ -40,6 +40,7 @@ describe('PostController', () => {
     }).compile();
 
     app = module.createNestApplication();
+    app.setGlobalPrefix('/api');
     validationPipe(app);
     await app.init();
 
@@ -49,7 +50,7 @@ describe('PostController', () => {
   describe('/POST posts', () => {
     test('작성자 명이 빈 문자열일 경우 400 응답', async () => {
       const res = await request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '',
           password: '1234qwer',
@@ -63,7 +64,7 @@ describe('PostController', () => {
 
     test('작성자 명이 빈 문자열일 경우 400 응답', async () => {
       const res = await request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '',
           password: '1234qwer',
@@ -77,7 +78,7 @@ describe('PostController', () => {
 
     test('비밀번호가 6글자 미만일 경우 400 응답', async () => {
       const res = await request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '루비',
           password: 'qwer1',
@@ -91,7 +92,7 @@ describe('PostController', () => {
 
     test('비밀번호에 숫자가 포함되어 있지 않을 경우 400 응답', async () => {
       const res = await request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '루비',
           password: 'qwerqwe',
@@ -105,7 +106,7 @@ describe('PostController', () => {
 
     test('게시글 제목이 2글자 미만일 경우 400 응답', async () => {
       const res = await request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '루비',
           password: 'qwerqwe12',
@@ -119,7 +120,7 @@ describe('PostController', () => {
 
     test('게시글 제목이 20글자 초과일 경우 400 응답', async () => {
       const res = await request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '루비',
           password: 'qwerqwe12',
@@ -133,7 +134,7 @@ describe('PostController', () => {
 
     test('게시글 본문이 2글자 미만일 경우 400 응답', async () => {
       return request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '루비',
           password: '1234qwer',
@@ -150,7 +151,7 @@ describe('PostController', () => {
       }
 
       const res = await request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '루비',
           password: 'qwerqwe12',
@@ -164,7 +165,7 @@ describe('PostController', () => {
 
     test('모든 필드 값이 빈 문자열일 경우 400 응답', async () => {
       const res = await request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '',
           password: '',
@@ -182,7 +183,7 @@ describe('PostController', () => {
 
     test('게시글 등록 성공', async () => {
       return request(app.getHttpServer())
-        .post('/posts')
+        .post('/api/posts')
         .send({
           author: '루비',
           password: '1234qwer',
@@ -212,7 +213,7 @@ describe('PostController', () => {
 
     test('이전 마지막 조회 게시글 id 값이 숫자가 아닌 경우 400 응답', async () => {
       const err = await request(app.getHttpServer())
-        .get('/posts')
+        .get('/api/posts')
         .query({
           beforeLastId: '숫자아님',
         })
@@ -229,7 +230,7 @@ describe('PostController', () => {
       const beforeLastId = beforeLastPost.id;
 
       const res = await request(app.getHttpServer())
-        .get('/posts')
+        .get('/api/posts')
         .query({ beforeLastId })
         .expect(200);
 
@@ -241,7 +242,7 @@ describe('PostController', () => {
 
     test('검색어에 해당하는 게시글 목록 조회', async () => {
       const res = await request(app.getHttpServer())
-        .get('/posts')
+        .get('/api/posts')
         .query({ keyword: '게시글 2' })
         .expect(200);
 
@@ -266,7 +267,7 @@ describe('PostController', () => {
       const beforeLastId = beforeLastPost.id;
 
       const res = await request(app.getHttpServer())
-        .get('/posts')
+        .get('/api/posts')
         .query({ beforeLastId, keyword: '게시글 2' })
         .expect(200);
 
@@ -285,7 +286,9 @@ describe('PostController', () => {
     });
 
     test('검색조건 없이 게시글 목록 조회', async () => {
-      const res = await request(app.getHttpServer()).get('/posts').expect(200);
+      const res = await request(app.getHttpServer())
+        .get('/api/posts')
+        .expect(200);
 
       expect(res.body.contents.length).toEqual(20);
     });
