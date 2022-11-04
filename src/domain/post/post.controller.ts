@@ -5,10 +5,11 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Res,
 } from '@nestjs/common';
-import { AddPostDto, GetPostsDto } from './post.request.dto';
+import { AddPostDto, GetPostsDto, UpdatePostDto } from './post.request.dto';
 import { PostService } from './post.service';
 import { PostResponse, PostsResponse } from './post.response.dto';
 import { IdPipe } from '../../common/pipe/validation.pipe';
@@ -33,5 +34,15 @@ export class PostController {
   async getPost(@Param('id', IdPipe) id: number): Promise<PostResponse> {
     const post = await this.postService.getPost(id);
     return new PostResponse(post);
+  }
+
+  @Put(':id')
+  async updatePost(
+    @Param('id', IdPipe) id: number,
+    @Body() updatePost: UpdatePostDto,
+    @Res() res,
+  ): Promise<void> {
+    await this.postService.updatePost(id, updatePost);
+    return res.status(HttpStatus.NO_CONTENT).send();
   }
 }

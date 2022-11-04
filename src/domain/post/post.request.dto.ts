@@ -1,7 +1,8 @@
 import { PickType } from '@nestjs/swagger';
 import { Post } from './post.entity';
 import { IsOptionalId } from '../../common/validation/IsOptionalId.validation';
-import { IsOptional } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { PostErrorMessage } from './post.error.message';
 
 export class AddPostDto extends PickType(Post, [
   'author',
@@ -16,4 +17,13 @@ export class GetPostsDto {
 
   @IsOptional()
   keyword: string;
+}
+
+export class UpdatePostDto extends PickType(Post, [
+  'author',
+  'title',
+  'content',
+] as const) {
+  @IsString({ message: PostErrorMessage.PASSWORD })
+  password: string;
 }

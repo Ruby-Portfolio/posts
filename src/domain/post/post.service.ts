@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PostRepository } from './post.repository';
-import { AddPostDto, GetPostsDto } from './post.request.dto';
+import { AddPostDto, GetPostsDto, UpdatePostDto } from './post.request.dto';
 import * as bcrypt from 'bcrypt';
-import { InsertResult } from 'typeorm';
+import { InsertResult, UpdateResult } from 'typeorm';
 import { Post } from './post.entity';
-import { PostNotFoundException } from './post.exception';
+import {
+  PasswordMismatchException,
+  PostNotFoundException,
+} from './post.exception';
 
 @Injectable()
 export class PostService {
@@ -26,8 +29,8 @@ export class PostService {
     });
   }
 
-  async getPosts(getPostsDto: GetPostsDto): Promise<Post[]> {
-    return this.postRepository.getPosts(getPostsDto);
+  async getPosts(getPosts: GetPostsDto): Promise<Post[]> {
+    return this.postRepository.getPosts(getPosts);
   }
 
   async getPost(id: number): Promise<Post> {
@@ -38,5 +41,26 @@ export class PostService {
     }
 
     return post;
+  }
+
+  async updatePost(
+    id: number,
+    { author, password, title, content }: UpdatePostDto,
+  ): Promise<UpdateResult> {
+    const existsPost = await this.postRepository.findOneBy({ id });
+
+    if (!existsPost) {
+      throw new PostNotFoundException();
+    }
+
+    if (!(await existsPost.equalsPassword(password))) {
+      throw new PasswordMismatchException();
+    }
+
+    return this.postRepository.update(id, {
+      author,
+      title,
+      content,
+    });
   }
 }
