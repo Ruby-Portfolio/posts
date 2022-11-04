@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from '@nestjs/class-validator';
-import { PostMessage } from '../domain/post/post.message';
+import { PostMessage } from '../../domain/post/post.message';
 
 export function IsPassword(
   passwordLengthOption?: PasswordLengthOption,
