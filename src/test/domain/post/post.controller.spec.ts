@@ -251,9 +251,9 @@ describe('PostController', () => {
           .expect(200);
 
         await expect(
-          res.body.contents.every((post) => post.id < beforeLastId),
+          res.body.posts.every((post) => post.id < beforeLastId),
         ).toBeTruthy();
-        return expect(res.body.contents.length > 0).toBeTruthy();
+        return expect(res.body.posts.length > 0).toBeTruthy();
       });
 
       test('검색어에 해당하는 게시글 목록 조회', async () => {
@@ -263,7 +263,7 @@ describe('PostController', () => {
           .expect(200);
 
         await expect(
-          res.body.contents.every((post) => {
+          res.body.posts.every((post) => {
             return (
               post.title.indexOf('게시글') ||
               post.title.indexOf('2') ||
@@ -272,11 +272,11 @@ describe('PostController', () => {
             );
           }),
         ).toBeTruthy();
-        await expect(res.body.contents.length > 0).toBeTruthy();
+        await expect(res.body.posts.length > 0).toBeTruthy();
 
         const minId = Math.min.apply(
           null,
-          res.body.contents.map((post) => post.id),
+          res.body.posts.map((post) => post.id),
         );
 
         await expect(res.body.beforeLastId).toEqual(minId);
@@ -295,7 +295,7 @@ describe('PostController', () => {
           .expect(200);
 
         await expect(
-          res.body.contents.every((post) => {
+          res.body.posts.every((post) => {
             return (
               post.id < beforeLastId &&
               (post.title.indexOf('게시글') ||
@@ -305,11 +305,11 @@ describe('PostController', () => {
             );
           }),
         ).toBeTruthy();
-        await expect(res.body.contents.length > 0).toBeTruthy();
+        await expect(res.body.posts.length > 0).toBeTruthy();
 
         const minId = Math.min.apply(
           null,
-          res.body.contents.map((post) => post.id),
+          res.body.posts.map((post) => post.id),
         );
 
         await expect(res.body.beforeLastId).toEqual(minId);
@@ -320,11 +320,11 @@ describe('PostController', () => {
           .get('/api/posts')
           .expect(200);
 
-        await expect(res.body.contents.length).toEqual(20);
+        await expect(res.body.posts.length).toEqual(20);
 
         const minId = Math.min.apply(
           null,
-          res.body.contents.map((post) => post.id),
+          res.body.posts.map((post) => post.id),
         );
 
         await expect(res.body.beforeLastId).toEqual(minId);
@@ -376,7 +376,7 @@ describe('PostController', () => {
         .get(`/api/posts/${id}`)
         .expect(200);
 
-      return expect(res.body.content.id).toEqual(id);
+      return expect(res.body.post.id).toEqual(id);
     });
   });
 

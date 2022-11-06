@@ -2,7 +2,7 @@ import { Post } from './post.entity';
 
 export class PostsResponse {
   constructor(posts: Post[]) {
-    this.contents = posts?.map((post) => {
+    this.posts = posts?.map((post) => {
       return { ...post, ...post.dateColumns };
     });
     if (posts.length > 0) {
@@ -11,7 +11,7 @@ export class PostsResponse {
   }
 
   beforeLastId: number;
-  contents: {
+  posts: {
     id: number;
     author: string;
     title: string;
@@ -21,10 +21,10 @@ export class PostsResponse {
 
 export class PostResponse {
   constructor(post: Post) {
-    this.content = { ...post, ...post.dateColumns };
+    this.post = { ...post, ...post.dateColumns };
   }
 
-  content: {
+  post: {
     id: number;
     author: string;
     title: string;
