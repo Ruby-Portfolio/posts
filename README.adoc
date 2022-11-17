@@ -118,7 +118,7 @@ content : 게시글 본문
 
 == 테스트
 
-* link:https://github.com/MisterRuby/posts/tree/main/src/test/domain/post[테스트 코드]
+* link:https://github.com/MisterRuby/posts/tree/main/src/test/domain/post[게시글 CRUD ]
 
 === 테스트 전체 실행 결과
 image:img.png[img.png]
